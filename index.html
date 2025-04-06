@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东华杯 Tung Wah Cup - Identity V Tournament</title>
+    <link href="./东华杯3_files/tailwind.min.css" rel="stylesheet">
+    <link href="./东华杯3_files/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        
+        :root {
+            --primary-color: #135e3d;
+            --secondary-color: #d4af37;
+            --background-color: #f5f2e8;
+            --text-color: #333;
+            --accent-color: #c14130;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            position: relative;
+            padding-bottom: 60px;
+        }
+        
+        .editable:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: 1px dashed #aaa;
+            cursor: text;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .tournament-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .admin-panel.active {
+            right: 0;
+        }
+        
+        .team-logo {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin: 0 auto 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .character-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .character-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .mvp-card {
+            background: linear-gradient(135deg, var(--primary-color), #1a8870);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .print-only {
+            display: none;
+        }
+        
+         {
+            .no-print {
+                display: none;
+            }
+            
+            .print-only {
+                display: block;
+            }
+            
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            
+            .container {
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4" style="max-width: 100%;">
+        <!-- Tournament Logo and Title -->
+        <div class="flex justify-between items-center mt-4">
+            <h1 class="text-3xl font-bold text-center w-full editable" id="tournament-title" contenteditable="false">东华杯 Tung Wah Cup</h1>
+            <button id="admin-toggle" class="bg-gray-800 text-white px-4 py-2 rounded no-print">
+                管理员登录
+            </button>
+        </div>
+
+        <!-- Main Trophy Logo -->
+        <div class="flex justify-center my-6">
+            <div class="relative w-64 h-64">
+                <svg viewBox="0 0 200 200" class="w-full h-full">
+                    <g transform="translate(10, 10)">
+                        <!-- Trophy Cup -->
+                        <path d="M30,40 L150,40 L150,100 C150,140 120,160 90,160 C60,160 30,140 30,100 Z" fill="#135e3d" stroke="#0c432c" stroke-width="2"></path>
+                        <path d="M40,50 L140,50 L140,100 C140,130 115,150 90,150 C65,150 40,130 40,100 Z" fill="#1a8870" stroke="none"></path>
+                        
+                        <!-- Cup Handles -->
+                        <path d="M30,60 C10,60 0,80 15,95 C25,105 30,80 30,70 Z" fill="#135e3d" stroke="#0c432c" stroke-width="1"></path>
+                        <path d="M150,60 C170,60 180,80 165,95 C155,105 150,80 150,70 Z" fill="#135e3d" stroke="#0c432c" stroke-width="1"></path>
+                        
+                        <!-- Base -->
+                        <rect x="70" y="160" width="40" height="10" fill="#135e3d" stroke="#0c432c" stroke-width="1"></rect>
+                        <rect x="60" y="170" width="60" height="5" fill="#135e3d" stroke="#0c432c" stroke-width="1"></rect>
+                        
+                        <!-- Globe in center -->
+                        <circle cx="90" cy="85" r="30" fill="#168e66" stroke="#0c432c" stroke-width="1"></circle>
+                        <ellipse cx="90" cy="85" rx="30" ry="20" fill="none" stroke="#d4af37" stroke-width="1"></ellipse>
+                        <path d="M60,85 L120,85" stroke="#d4af37" stroke-width="1"></path>
+                        <path d="M90,55 L90,105" stroke="#d4af37" stroke-width="1"></path>
+                        
+                        <!-- Text Banner -->
+                        <rect x="65" y="80" width="50" height="20" fill="#c14130" rx="3" ry="3"></rect>
+                        <text x="90" y="93" fill="#d4af37" text-anchor="middle" font-weight="bold" font-size="10">TUNG WAH</text>
+                        
+                        <!-- Laurel Wreath -->
+                        <path d="M65,110 C60,100 70,90 80,95 C75,100 70,105 65,110 Z" fill="#d4af37" stroke="none"></path>
+                        <path d="M115,110 C120,100 110,90 100,95 C105,100 110,105 115,110 Z" fill="#d4af37" stroke="none"></path>
+                    </g>
+                    <text x="100" y="25" fill="#135e3d" text-anchor="middle" font-weight="bold" font-size="16">TUNG WAH CUP</text>
+                    <text x="100" y="195" fill="#135e3d" text-anchor="middle" font-weight="bold" font-size="14">IDENTITY V</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="text-center mb-8">
+            <h2 class="text-xl font-bold mb-2 editable" id="tournament-subtitle" contenteditable="false">第五人格电竞赛事</h2>
+            <p class="editable" id="tournament-description" contenteditable="false">首届东华杯第五人格电竞赛事，汇集学校最顶尖的求生者与监管者，通过激烈角逐决出最强战队！</p>
+        </div>
+
+        <!-- Tournament Overview Section -->
+        <div class="section-title">
+            <span class="editable" contenteditable="false">比赛信息</span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="stat-card text-center">
+                <h3 class="text-lg font-bold text-gray-600">奖金池 Prize Pool</h3>
+                <p class="text-3xl font-bold text-primary editable" id="prize-pool" contenteditable="false">¥100,000</p>
+            </div>
+            <div class="stat-card text-center">
+                <h3 class="text-lg font-bold text-gray-600">参赛队伍 Teams</h3>
+                <p class="text-3xl font-bold text-primary editable" id="team-count" contenteditable="false">16</p>
+            </div>
+            <div class="stat-card text-center">
+                <h3 class="text-lg font-bold text-gray-600">比赛地点 Location</h3>
+                <p class="text-xl font-bold text-primary editable" id="location" contenteditable="false">东莞市东华高级中学</p>
+            </div>
+        </div>
+
+        <!-- Latest Match Section -->
+        <div class="section-title">
+            <span class="editable" contenteditable="false">赛点</span>: <span class="editable" id="match-title" contenteditable="false">半决赛 - 噩梦战队 vs 幻象战队</span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Team 1 -->
+            <div class="bg-white rounded-lg p-6 shadow-md">
+                <div class="text-center mb-4">
+                    <div class="team-logo editable" id="team1-logo" contenteditable="false">1</div>
+                    <h3 class="text-xl font-bold editable" id="team1-name" contenteditable="false">1噩梦战队</h3>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p class="text-sm text-gray-600">得分</p>
+                        <p class="text-2xl font-bold editable" id="team1-score" contenteditable="false">2</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">密码机解码</p>
+                        <p class="text-lg font-bold editable" id="team1-cipher" contenteditable="false">4/5</p>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-bar-fill" id="team1-cipher-progress" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p class="text-sm text-gray-600">救援成功率</p>
+                        <p class="text-lg font-bold editable" id="team1-rescue" contenteditable="false">67%</p>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-bar-fill" id="team1-rescue-progress" style="width: 67%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">平均牵制时间</p>
+                        <p class="text-lg font-bold editable" id="team1-kite" contenteditable="false">98秒</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-2 text-center">
+                    <div class="character-item">
+                        <div class="character-image" id="team1-char1-img">
+                            <img src="./东华杯3_files/forward.png" alt="前锋">
+                        </div>
+                        <p class="text-sm mt-1 editable" id="team1-char1" contenteditable="false">前锋</p>
+                    </div>
+                    <div class="character-item">
+                        <div class="character-image" id="team1-char2-img">
+                            <img src="./东华杯3_files/doctor.png" alt="医生">
+                        </div>
+                        <p class="text-sm mt-1 editable" id="team1-char2" contenteditable="false">医生</p>
+                    </div>
+                    <div class="character-item">
+                        <div class="character-image" id="team1-char3-img">
+                            <img src="./东华杯3_files/mechanic.png" alt="机械师">
+                        </div>
+                        <p class="text-sm mt-1 editable" id="team1-char3" contenteditable="false">机械师</p>
+                    </div>
+                    <div class="character-item">
+                        <div class="character-image" id="team1-char4-img">
+                            <img src="./东华杯3_files/mercenary.png" alt="佣兵">
+                        </div>
+                        <p class="text-sm mt-1 editable" id="team1-char4" contenteditable="false">佣兵</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Team 2 -->
+            <div class="bg-white rounded-lg p-6 shadow-md">
+                <div class="text-center mb-4">
+                    <div class="team-logo editable" id="team2-logo" contenteditable="false">幻</div>
+                    <h3 class="text-xl font-bold editable" id="team2-name" contenteditable="false">幻象战队</h3>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p class="text-sm text-gray-600">得分</p>
+                        <p class="text-2xl font-bold editable" id="team2-score" contenteditable="false">1</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">密码机解码</p>
+                        <p class="text-lg font-bold editable" id="team2-cipher" contenteditable="false">3/5</p>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-bar-fill" id="team2-cipher-progress" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p class="text-sm text-gray-600">救援成功率</p>
+                        <p class="text-lg font-bold editable" id="team2-rescue" contenteditable="false">50%</p>
+                        <div class="progress-bar mt-1">
+                            <div class="progress-bar-fill" id="team2-rescue-progress" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">平均牵制时间</p>
+                        <p class="text-lg font-bold editable" id="team2-kite" contenteditable="false">120秒</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-4 gap-2 text-center">
+                    <div class="character-item">
+                        <div class="character-image" id="team2-char1-img">
+                            <img src="./东华杯3_files/bloodqueen.png" alt="红蝶">
+                        </div>
+                        <p class="text-sm mt-1 editable" id="team2-char1" contenteditable="false">红蝶</p>
+                    </div>
+                    <div class="character-item hidden" id="team2-char2-container">
+                        <div class="character-image" id="team2-char2-img">
+                            <img src="https://page.genspark.site/page/toolu_01NQ6seq4h7AY2XsPCCNW4ZF/tung_wah_cup_identity_v_tournament.html" alt="">
+                        </div>
+                        <p class="text-sm mt-1 editable" id="team2-char2" contenteditable="false"></p>
+                    </div>
+                    <div class="character-item hidden" id="team2-char3-container">
+                        <div class="character-image" id="team2-char3-img">
+                            <img src="https://page.genspark.site/page/toolu_01NQ6seq4h7AY2XsPCCNW4ZF/tung_wah_cup_identity_v_tournament.html" alt="">
+                        </div>
+                        <p class="text-sm mt-1 editable" id="team2-char3" contenteditable="false"></p>
+                    </div>
+                    <div class="character-item hidden" id="team2-char4-container">
+                        <div class="character-image" id="team2-char4-img">
+                            <img src="https://page.genspark.site/page/toolu_01NQ6seq4h7AY2XsPCCNW4ZF/tung_wah_cup_identity_v_tournament.html" alt="">
+                        </div>
+                        <p class="text-sm mt-1 editable" id="team2-char4" contenteditable="false"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match Details Section -->
+        <div class="section-title">
+            <span class="editable" contenteditable="false">回合详情</span>
+        </div>
+
+        <div class="overflow-x-auto mb-8">
+            <table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th class="editable" contenteditable="false">场次 </th>
+                        <th class="editable" contenteditable="false">地图 </th>
+                        <th class="editable" contenteditable="false">1队</th>
+                        <th class="editable" contenteditable="false">2队</th>
+                        <th class="editable" contenteditable="false">淘汰数据</th>
+                        <th class="editable" contenteditable="false">密码机 T</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="editable" id="round1-num" contenteditable="false">1</td>
+                        <td class="editable" id="round1-map" contenteditable="false">军工厂</td>
+                        <td class="editable" id="round1-team1" contenteditable="false">3 (求生)</td>
+                        <td class="editable" id="round1-team2" contenteditable="false">1 (监管)</td>
+                        <td class="editable" id="round1-elim" contenteditable="false">1/4</td>
+                        <td class="editable" id="round1-cipher" contenteditable="false">5/5</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="round2-num" contenteditable="false">2</td>
+                        <td class="editable" id="round2-map" contenteditable="false">湖景村</td>
+                        <td class="editable" id="round2-team1" contenteditable="false">0 (监管)</td>
+                        <td class="editable" id="round2-team2" contenteditable="false">2 (求生)</td>
+                        <td class="editable" id="round2-elim" contenteditable="false">2/4</td>
+                        <td class="editable" id="round2-cipher" contenteditable="false">4/5</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="round3-num" contenteditable="false">3</td>
+                        <td class="editable" id="round3-map" contenteditable="false">红教堂</td>
+                        <td class="editable" id="round3-team1" contenteditable="false">2 (求生)</td>
+                        <td class="editable" id="round3-team2" contenteditable="false">0 (监管)</td>
+                        <td class="editable" id="round3-elim" contenteditable="false">4/4</td>
+                        <td class="editable" id="round3-cipher" contenteditable="false">2/5</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Match Highlights Section -->
+        <div class="section-title">
+            <span class="editable" contenteditable="false">精彩回放 Tournament MVP</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg p-4 shadow-md">
+                <h3 class="text-lg font-bold mb-2 editable" id="highlight1-title" contenteditable="false">噩梦战队 - 佣兵</h3>
+                <p class="editable" id="highlight1-desc" contenteditable="false">在第三局中成功救援两次并且保护机械师完成最后一台密码机</p>
+            </div>
+            
+            <div class="bg-white rounded-lg p-4 shadow-md">
+                <h3 class="text-lg font-bold mb-2 editable" id="highlight2-title" contenteditable="false">幻象战队 - 红蝶</h3>
+                <p class="editable" id="highlight2-desc" contenteditable="false">在第二局以不到90秒的时间连续击倒两名生存者，展现强大控场能力</p>
+            </div>
+            
+            <div class="bg-white rounded-lg p-4 shadow-md">
+                <h3 class="text-lg font-bold mb-2 editable" id="highlight3-title" contenteditable="false">噩梦战队 - 前锋</h3>
+                <p class="editable" id="highlight3-desc" contenteditable="false">在最后一局成功牵制监管者长达140秒，为队友争取宝贵的解码时间</p>
+            </div>
+        </div>
+
+        <!-- Player Rankings Section -->
+        <div class="section-title">
+            <span class="editable" contenteditable="false">选手数据</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Survivor Rankings -->
+            <div>
+                <h3 class="text-xl font-bold mb-4 text-center editable" contenteditable="false">求生者</h3>
+                
+                <!-- Kiting Time Rankings -->
+                <div class="bg-white rounded-lg p-4 shadow-md mb-6">
+                    <h4 class="text-lg font-bold mb-3 editable" contenteditable="false">牵制时长</h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="kite-rank1-name" contenteditable="false">王小明 (前锋)</span>
+                                <span class="editable" id="kite-rank1-value" contenteditable="false">145秒</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="kite-rank1-progress" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="kite-rank2-name" contenteditable="false">李强 (佣兵)</span>
+                                <span class="editable" id="kite-rank2-value" contenteditable="false">120秒</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="kite-rank2-progress" style="width: 82.7586%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="kite-rank3-name" contenteditable="false">张伟 (盲女)</span>
+                                <span class="editable" id="kite-rank3-value" contenteditable="false">105秒</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="kite-rank3-progress" style="width: 72.4138%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="kite-rank4-name" contenteditable="false">赵亮 (先知)</span>
+                                <span class="editable" id="kite-rank4-value" contenteditable="false">95秒</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="kite-rank4-progress" style="width: 65.5172%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rescue Count Rankings -->
+                <div class="bg-white rounded-lg p-4 shadow-md mb-6">
+                    <h4 class="text-lg font-bold mb-3 editable" contenteditable="false">救援次数</h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="rescue-rank1-name" contenteditable="false">赵小红 (医生)</span>
+                                <span class="editable" id="rescue-rank1-value" contenteditable="false">12次</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="rescue-rank1-progress" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="rescue-rank2-name" contenteditable="false">李强 (佣兵)</span>
+                                <span class="editable" id="rescue-rank2-value" contenteditable="false">9次</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="rescue-rank2-progress" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="rescue-rank3-name" contenteditable="false">刘杰 (园丁)</span>
+                                <span class="editable" id="rescue-rank3-value" contenteditable="false">7次</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="rescue-rank3-progress" style="width: 58.3333%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="rescue-rank4-name" contenteditable="false">张鑫 (调香师)</span>
+                                <span class="editable" id="rescue-rank4-value" contenteditable="false">5次</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="rescue-rank4-progress" style="width: 41.6667%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cipher Completion Rankings -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h4 class="text-lg font-bold mb-3 editable" contenteditable="false">破译进度</h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="cipher-rank1-name" contenteditable="false">陈思思 (机械师)</span>
+                                <span class="editable" id="cipher-rank1-value" contenteditable="false">15台</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="cipher-rank1-progress" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="cipher-rank2-name" contenteditable="false">李玲 (咒术师)</span>
+                                <span class="editable" id="cipher-rank2-value" contenteditable="false">12台</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="cipher-rank2-progress" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="cipher-rank3-name" contenteditable="false">张小菲 (学者)</span>
+                                <span class="editable" id="cipher-rank3-value" contenteditable="false">10台</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="cipher-rank3-progress" style="width: 66.6667%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="cipher-rank4-name" contenteditable="false">刘明 (勘探员)</span>
+                                <span class="editable" id="cipher-rank4-value" contenteditable="false">8台</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="cipher-rank4-progress" style="width: 53.3333%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hunter Rankings -->
+            <div>
+                <h3 class="text-xl font-bold mb-4 text-center editable" contenteditable="false">监管者</h3>
+                
+                <!-- Elimination Count Rankings -->
+                <div class="bg-white rounded-lg p-4 shadow-md mb-6">
+                    <h4 class="text-lg font-bold mb-3 editable" contenteditable="false">平均淘汰</h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="elim-rank1-name" contenteditable="false">张天翼 (杰克)</span>
+                                <span class="editable" id="elim-rank1-value" contenteditable="false">24人</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="elim-rank1-progress" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="elim-rank2-name" contenteditable="false">李梦 (红蝶)</span>
+                                <span class="editable" id="elim-rank2-value" contenteditable="false">19人</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="elim-rank2-progress" style="width: 79.1667%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="elim-rank3-name" contenteditable="false">何超 (鬼泣)</span>
+                                <span class="editable" id="elim-rank3-value" contenteditable="false">15人</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="elim-rank3-progress" style="width: 62.5%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="elim-rank4-name" contenteditable="false">周强 (摄影师)</span>
+                                <span class="editable" id="elim-rank4-value" contenteditable="false">13人</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="elim-rank4-progress" style="width: 54.1667%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chase Time Rankings -->
+                <div class="bg-white rounded-lg p-4 shadow-md mb-6">
+                    <h4 class="text-lg font-bold mb-3 editable" contenteditable="false">平均击倒</h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="chase-rank1-name" contenteditable="false">王勇 (小丑)</span>
+                                <span class="editable" id="chase-rank1-value" contenteditable="false">25秒</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="chase-rank1-progress" style="width: 60.9756%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="chase-rank2-name" contenteditable="false">张天翼 (杰克)</span>
+                                <span class="editable" id="chase-rank2-value" contenteditable="false">32秒</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="chase-rank2-progress" style="width: 78.0488%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="chase-rank3-name" contenteditable="false">李梦 (红蝶)</span>
+                                <span class="editable" id="chase-rank3-value" contenteditable="false">38秒</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="chase-rank3-progress" style="width: 92.6829%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="chase-rank4-name" contenteditable="false">吴浩 (百战)</span>
+                                <span class="editable" id="chase-rank4-value" contenteditable="false">41秒</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="chase-rank4-progress" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Map Control Rankings -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h4 class="text-lg font-bold mb-3 editable" contenteditable="false">四抓率</h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="control-rank1-name" contenteditable="false">何超 (鬼泣)</span>
+                                <span class="editable" id="control-rank1-value" contenteditable="false">A+</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="control-rank1-progress" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="control-rank2-name" contenteditable="false">赵大勇 (守卫者)</span>
+                                <span class="editable" id="control-rank2-value" contenteditable="false">A</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="control-rank2-progress" style="width: 89.4737%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="control-rank3-name" contenteditable="false">陈虎 (黄衣之主)</span>
+                                <span class="editable" id="control-rank3-value" contenteditable="false">A-</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="control-rank3-progress" style="width: 89.4737%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="editable" id="control-rank4-name" contenteditable="false">林志 (厂长)</span>
+                                <span class="editable" id="control-rank4-value" contenteditable="false">B+</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="control-rank4-progress" style="width: 78.9474%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Rankings Section -->
+        <div class="section-title">
+            <span class="editable" contenteditable="false">团队赛事排名</span>
+        </div>
+
+        <div class="overflow-x-auto mb-8">
+            <table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th class="editable" contenteditable="false">排名</th>
+                        <th class="editable" contenteditable="false">战队</th>
+                        <th class="editable" contenteditable="false">胜场</th>
+                        <th class="editable" contenteditable="false">负场</th>
+                        <th class="editable" contenteditable="false">胜率</th>
+                        <th class="editable" contenteditable="false">积分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="editable" id="team-rank1-pos" contenteditable="false">1</td>
+                        <td class="editable" id="team-rank1-name" contenteditable="false">噩梦战队</td>
+                        <td class="editable" id="team-rank1-win" contenteditable="false">8</td>
+                        <td class="editable" id="team-rank1-loss" contenteditable="false">1</td>
+                        <td class="editable" id="team-rank1-rate" contenteditable="false">89%</td>
+                        <td class="editable" id="team-rank1-points" contenteditable="false">24</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="team-rank2-pos" contenteditable="false">2</td>
+                        <td class="editable" id="team-rank2-name" contenteditable="false">暗影战队</td>
+                        <td class="editable" id="team-rank2-win" contenteditable="false">7</td>
+                        <td class="editable" id="team-rank2-loss" contenteditable="false">2</td>
+                        <td class="editable" id="team-rank2-rate" contenteditable="false">78%</td>
+                        <td class="editable" id="team-rank2-points" contenteditable="false">21</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="team-rank3-pos" contenteditable="false">3</td>
+                        <td class="editable" id="team-rank3-name" contenteditable="false">幻象战队</td>
+                        <td class="editable" id="team-rank3-win" contenteditable="false">6</td>
+                        <td class="editable" id="team-rank3-loss" contenteditable="false">3</td>
+                        <td class="editable" id="team-rank3-rate" contenteditable="false">67%</td>
+                        <td class="editable" id="team-rank3-points" contenteditable="false">18</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="team-rank4-pos" contenteditable="false">4</td>
+                        <td class="editable" id="team-rank4-name" contenteditable="false">魔术师战队</td>
+                        <td class="editable" id="team-rank4-win" contenteditable="false">6</td>
+                        <td class="editable" id="team-rank4-loss" contenteditable="false">3</td>
+                        <td class="editable" id="team-rank4-rate" contenteditable="false">67%</td>
+                        <td class="editable" id="team-rank4-points" contenteditable="false">18</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="team-rank5-pos" contenteditable="false">5</td>
+                        <td class="editable" id="team-rank5-name" contenteditable="false">命运战队</td>
+                        <td class="editable" id="team-rank5-win" contenteditable="false">5</td>
+                        <td class="editable" id="team-rank5-loss" contenteditable="false">4</td>
+                        <td class="editable" id="team-rank5-rate" contenteditable="false">56%</td>
+                        <td class="editable" id="team-rank5-points" contenteditable="false">15</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="team-rank6-pos" contenteditable="false">6</td>
+                        <td class="editable" id="team-rank6-name" contenteditable="false">猫头鹰战队</td>
+                        <td class="editable" id="team-rank6-win" contenteditable="false">5</td>
+                        <td class="editable" id="team-rank6-loss" contenteditable="false">4</td>
+                        <td class="editable" id="team-rank6-rate" contenteditable="false">56%</td>
+                        <td class="editable" id="team-rank6-points" contenteditable="false">15</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="team-rank7-pos" contenteditable="false">7</td>
+                        <td class="editable" id="team-rank7-name" contenteditable="false">时钟战队</td>
+                        <td class="editable" id="team-rank7-win" contenteditable="false">4</td>
+                        <td class="editable" id="team-rank7-loss" contenteditable="false">5</td>
+                        <td class="editable" id="team-rank7-rate" contenteditable="false">44%</td>
+                        <td class="editable" id="team-rank7-points" contenteditable="false">12</td>
+                    </tr>
+                    <tr>
+                        <td class="editable" id="team-rank8-pos" contenteditable="false">8</td>
+                        <td class="editable" id="team-rank8-name" contenteditable="false">幸运者战队</td>
+                        <td class="editable" id="team-rank8-win" contenteditable="false">3</td>
+                        <td class="editable" id="team-rank8-loss" contenteditable="false">6</td>
+                        <td class="editable" id="team-rank8-rate" contenteditable="false">33%</td>
+                        <td class="editable" id="team-rank8-points" contenteditable="false">9</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Team Analysis Section -->
+        <div class="section-title">
+            <span class="editable" contenteditable="false">团队数据分析</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg p-4 shadow-md">
+                <h3 class="text-lg font-bold mb-2 editable" id="analysis1-title" contenteditable="false">最强求生阵容</h3>
+                <p class="font-bold editable" id="analysis1-team" contenteditable="false">噩梦战队：前锋、机械师、医生、佣兵</p>
+                <p class="editable" id="analysis1-data" contenteditable="false">密码机解码率: 92%</p>
+            </div>
+            
+            <div class="bg-white rounded-lg p-4 shadow-md">
+                <h3 class="text-lg font-bold mb-2 editable" id="analysis2-title" contenteditable="false">最强监管者</h3>
+                <p class="font-bold editable" id="analysis2-team" contenteditable="false">暗影战队：张天翼 (杰克)</p>
+                <p class="editable" id="analysis2-data" contenteditable="false">平均淘汰时间: 4分12秒</p>
+            </div>
+            
+            <div class="bg-white rounded-lg p-4 shadow-md">
+                <h3 class="text-lg font-bold mb-2 editable" id="analysis3-title" contenteditable="false">最惊险比赛</h3>
+                <p class="font-bold editable" id="analysis3-team" contenteditable="false">幻象战队 vs 时钟战队 (5:4)</p>
+                <p class="editable" id="analysis3-data" contenteditable="false">9回合激战</p>
+            </div>
+        </div>
+
+        <!-- MVP Section -->
+        <div class="section-title">
+            <span class="editable" contenteditable="false">赛事MVP数据 Tournament MVP</span>
+        </div>
+
+        <div class="mvp-card mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <h3 class="text-xl font-bold mb-3 editable" id="mvp-name" contenteditable="false">李强</h3>
+                    <p class="text-lg editable" id="mvp-team" contenteditable="false">噩梦战队 - 佣兵</p>
+                    <div class="mb-2 mt-4">
+                        <div class="flex justify-between">
+                            <span>团队配合</span>
+                            <span class="editable" id="mvp-teamwork" contenteditable="false">S+</span>
+                        </div>
+                        <div class="progress-bar bg-white bg-opacity-20">
+                            <div class="progress-bar-fill bg-yellow-400" id="mvp-teamwork-bar" style="width: 98%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex justify-between">
+                            <span>个人能力</span>
+                            <span class="editable" id="mvp-skill" contenteditable="false">A+</span>
+                        </div>
+                        <div class="progress-bar bg-white bg-opacity-20">
+                            <div class="progress-bar-fill bg-yellow-400" id="mvp-skill-bar" style="width: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold editable" id="mvp-winrate" contenteditable="false">97%</div>
+                        <p class="text-sm">赛事胜率</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-4xl font-bold editable" id="mvp-kite" contenteditable="false">120秒</div>
+                        <p class="text-sm">平均牵制时间</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-4xl font-bold editable" id="mvp-rescue" contenteditable="false">88%</div>
+                        <p class="text-sm">救援成功率</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-4xl font-bold editable" id="mvp-cipher" contenteditable="false">9台</div>
+                        <p class="text-sm">密码机完成</p>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="character-image mx-auto mb-3" style="width: 100px; height: 100px;" id="mvp-char-img">
+                        <img src="./东华杯3_files/mercenary.png" alt="佣兵">
+                    </div>
+                    <div class="text-4xl font-bold editable" id="mvp-escape" contenteditable="false">92%</div>
+                    <p>成功逃脱</p>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <h4 class="text-xl font-bold mb-3">MVP表现亮点</h4>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li class="editable" id="mvp-highlight1" contenteditable="false">在对阵幻象战队的比赛中，成功牵制监管者长达187秒，创造赛事记录</li>
+                    <li class="editable" id="mvp-highlight2" contenteditable="false">连续救援成功4次，帮助团队在劣势局面下完成翻盘</li>
+                    <li class="editable" id="mvp-highlight3" contenteditable="false">作为佣兵，不仅擅长牵制，还在关键比赛中完成了多台密码机</li>
+                    <li class="editable" id="mvp-highlight4" contenteditable="false">团队沟通核心，指挥团队在危机时刻做出正确决策</li>
+                </ul>
+            </div>
+            
+            <div class="mt-6">
+                <h4 class="text-xl font-bold mb-3">MVP比赛历程</h4>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-transparent">
+                        <thead>
+                            <tr class="bg-transparent">
+                                <th class="text-left text-white">比赛</th>
+                                <th class="text-left text-white">对手</th>
+                                <th class="text-left text-white">角色</th>
+                                <th class="text-left text-white">牵制时间</th>
+                                <th class="text-left text-white">救援次数</th>
+                                <th class="text-left text-white">结果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="editable" id="mvp-match1-type" contenteditable="false">小组赛</td>
+                                <td class="editable" id="mvp-match1-opp" contenteditable="false">猫头鹰战队</td>
+                                <td class="editable" id="mvp-match1-char" contenteditable="false">佣兵</td>
+                                <td class="editable" id="mvp-match1-kite" contenteditable="false">105秒</td>
+                                <td class="editable" id="mvp-match1-rescue" contenteditable="false">2</td>
+                                <td class="editable" id="mvp-match1-result" contenteditable="false">胜利</td>
+                            </tr>
+                            <tr>
+                                <td class="editable" id="mvp-match2-type" contenteditable="false">小组赛</td>
+                                <td class="editable" id="mvp-match2-opp" contenteditable="false">时钟战队</td>
+                                <td class="editable" id="mvp-match2-char" contenteditable="false">佣兵</td>
+                                <td class="editable" id="mvp-match2-kite" contenteditable="false">98秒</td>
+                                <td class="editable" id="mvp-match2-rescue" contenteditable="false">1</td>
+                                <td class="editable" id="mvp-match2-result" contenteditable="false">胜利</td>
+                            </tr>
+                            <tr>
+                                <td class="editable" id="mvp-match3-type" contenteditable="false">四分之一决赛</td>
+                                <td class="editable" id="mvp-match3-opp" contenteditable="false">命运战队</td>
+                                <td class="editable" id="mvp-match3-char" contenteditable="false">佣兵</td>
+                                <td class="editable" id="mvp-match3-kite" contenteditable="false">132秒</td>
+                                <td class="editable" id="mvp-match3-rescue" contenteditable="false">3</td>
+                                <td class="editable" id="mvp-match3-result" contenteditable="false">胜利</td>
+                            </tr>
+                            <tr>
+                                <td class="editable" id="mvp-match4-type" contenteditable="false">半决赛</td>
+                                <td class="editable" id="mvp-match4-opp" contenteditable="false">幻象战队</td>
+                                <td class="editable" id="mvp-match4-char" contenteditable="false">佣兵</td>
+                                <td class="editable" id="mvp-match4-kite" contenteditable="false">187秒</td>
+                                <td class="editable" id="mvp-match4-rescue" contenteditable="false">4</td>
+                                <td class="editable" id="mvp-match4-result" contenteditable="false">胜利</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="text-center my-8">
+            <div class="text-xl font-bold mb-2 editable" id="footer-title" contenteditable="false">东华杯 TUNG WAH CUP</div>
+            <p class="text-sm editable" id="footer-copyright" contenteditable="false">© 2024 东莞市东华高级中学 · 第五人格校园赛事</p>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel no-print" id="admin-panel">
+        <h3 class="text-xl font-bold mb-4">管理员控制面板</h3>
+        
+        <button id="save-changes" class="bg-green-600 text-white px-4 py-2 rounded mb-4 w-full">
+            保存更改
+        </button>
+        
+        <button id="cancel-edit" class="bg-red-600 text-white px-4 py-2 rounded mb-4 w-full">
+            取消编辑
+        </button>
+        
+        <div class="mb-4">
+            <h4 class="font-bold mb-2">角色图像选择器</h4>
+            <select id="character-selector" class="w-full p-2 border rounded">
+                <option value="">选择角色</option>
+                <optgroup label="求生者">
+                    <option value="forward">前锋</option>
+                    <option value="doctor">医生</option>
+                    <option value="mechanic">机械师</option>
+                    <option value="mercenary">佣兵</option>
+                    <option value="seer">先知</option>
+                    <option value="perfumer">调香师</option>
+                    <option value="gardener">园丁</option>
+                    <option value="enchantress">咒术师</option>
+                    <option value="coordinator">调酒师</option>
+                    <option value="mind-eye">盲女</option>
+                    <option value="priestess">祭司</option>
+                    <option value="explorer">勘探员</option>
+                    <option value="embalmer">入殓师</option>
+                    <option value="prospector">淘金者</option>
+                    <option value="dancer">舞女</option>
+                </optgroup>
+                <optgroup label="监管者">
+                    <option value="bloodqueen">红蝶</option>
+                    <option value="ripper">杰克</option>
+                    <option value="gamekeeper">鹿头</option>
+                    <option value="geisha">艺伎</option>
+                    <option value="soulweaver">蜘蛛</option>
+                    <option value="feaster">触手</option>
+                    <option value="wuchang">黑白无常</option>
+                    <option value="photographer">摄影师</option>
+                    <option value="mad-eyes">疯眼</option>
+                    <option value="dream-witch">梦魇</option>
+                    <option value="axe-boy">斧小子</option>
+                    <option value="evil-reptilian">鬼泣</option>
+                </optgroup>
+            </select>
+            <div class="mt-2">
+                <input type="text" id="selected-element" class="w-full p-2 border rounded" placeholder="选择要更改的角色元素ID" readonly="">
+            </div>
+            <button id="apply-character" class="bg-blue-600 text-white px-4 py-2 rounded mt-2 w-full">
+                应用角色
+            </button>
+        </div>
+        
+        <div>
+            <h4 class="font-bold mb-2">进度条控制</h4>
+            <div class="mb-2">
+                <input type="text" id="progress-element" class="w-full p-2 border rounded" placeholder="进度条元素ID" readonly="">
+            </div>
+            <div class="flex items-center mb-2">
+                <input type="range" id="progress-value" class="w-full" min="0" max="100" value="50">
+                <span id="progress-percent" class="ml-2">100%</span>
+            </div>
+            <button id="apply-progress" class="bg-blue-600 text-white px-4 py-2 rounded mt-2 w-full">
+                应用进度
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 no-print hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h3 class="text-xl font-bold mb-4">管理员登录</h3>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">密码</label>
+                <input type="password" id="admin-password" class="w-full p-2 border rounded" placeholder="输入管理员密码">
+            </div>
+            <div class="flex justify-between">
+                <button id="login-cancel" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">
+                    取消
+                </button>
+                <button id="login-submit" class="bg-blue-600 text-white px-4 py-2 rounded">
+                    登录
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Constants
+            const ADMIN_PASSWORD = 'admin123';
+            
+            // Elements
+            const adminToggle = document.getElementById('admin-toggle');
+            const adminPanel = document.getElementById('admin-panel');
+            const loginModal = document.getElementById('login-modal');
+            const adminPassword = document.getElementById('admin-password');
+            const loginSubmit = document.getElementById('login-submit');
+            const loginCancel = document.getElementById('login-cancel');
+            const saveChanges = document.getElementById('save-changes');
+            const cancelEdit = document.getElementById('cancel-edit');
+            const characterSelector = document.getElementById('character-selector');
+            const selectedElement = document.getElementById('selected-element');
+            const applyCharacter = document.getElementById('apply-character');
+            const progressElement = document.getElementById('progress-element');
+            const progressValue = document.getElementById('progress-value');
+            const progressPercent = document.getElementById('progress-percent');
+            const applyProgress = document.getElementById('apply-progress');
+            
+            // State variables
+            let isEditMode = false;
+            let originalContent = {};
+            let selectedElementId = null;
+            let selectedProgressId = null;
+            
+         
+            // Initialize progress bars
+            function updateProgressBars() {
+                const progressBars = document.querySelectorAll('.progress-bar-fill');
+                progressBars.forEach(bar => {
+                    const width = bar.style.width;
+                    if (width) {
+                        bar.style.width = width;
+                    }
+                });
+            }
+            
+            // Toggle edit mode
+            function toggleEditMode(enabled) {
+                isEditMode = enabled;
+                
+                const editableElements = document.querySelectorAll('.editable');
+                
+                if (enabled) {
+                    // Store original content
+                    editableElements.forEach(el => {
+                        originalContent[el.id] = el.innerHTML;
+                        el.contentEditable = true;
+                        el.classList.add('border', 'border-blue-300', 'p-1');
+                    });
+                    
+                    adminPanel.classList.add('active');
+                } else {
+                    // Restore to non-editable
+                    editableElements.forEach(el => {
+                        el.contentEditable = false;
+                        el.classList.remove('border', 'border-blue-300', 'p-1');
+                    });
+                    
+                    adminPanel.classList.remove('active');
+                }
+            }
+            
+            // Show login modal
+            adminToggle.addEventListener('click', function() {
+                loginModal.classList.remove('hidden');
+                adminPassword.focus();
+            });
+            
+            // Hide login modal
+            loginCancel.addEventListener('click', function() {
+                loginModal.classList.add('hidden');
+                adminPassword.value = '';
+            });
+            
+            // Login submission
+            loginSubmit.addEventListener('click', function() {
+                if (adminPassword.value === ADMIN_PASSWORD) {
+                    loginModal.classList.add('hidden');
+                    adminPassword.value = '';
+                    toggleEditMode(true);
+                } else {
+                    alert('密码错误');
+                }
+            });
+            
+            // Enter key in password field
+            adminPassword.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    loginSubmit.click();
+                }
+            });
+            
+            // Save changes
+            saveChanges.addEventListener('click', function() {
+                toggleEditMode(false);
+                updateDynamicElements();
+                alert('更改已保存');
+            });
+            
+            // Cancel edit
+            cancelEdit.addEventListener('click', function() {
+                const editableElements = document.querySelectorAll('.editable');
+                
+                editableElements.forEach(el => {
+                    if (originalContent[el.id]) {
+                        el.innerHTML = originalContent[el.id];
+                    }
+                });
+                
+                toggleEditMode(false);
+                alert('已取消编辑');
+            });
+            
+            // Make elements selectable for character change
+            document.addEventListener('click', function(e) {
+                if (!isEditMode) return;
+                
+                const characterItem = e.target.closest('.character-item');
+                if (characterItem) {
+                    const charElement = characterItem.querySelector('p');
+                    if (charElement) {
+                        selectedElementId = charElement.id;
+                        selectedElement.value = selectedElementId;
+                    }
+                }
+                
+                const progressBar = e.target.closest('.progress-bar');
+                if (progressBar) {
+                    const fillElement = progressBar.querySelector('.progress-bar-fill');
+                    if (fillElement) {
+                        selectedProgressId = fillElement.id;
+                        progressElement.value = selectedProgressId;
+                        
+                        // Get current width percentage
+                        const currentWidth = fillElement.style.width || '0%';
+                        const percentValue = parseInt(currentWidth);
+                        progressValue.value = percentValue;
+                        progressPercent.textContent = percentValue + '%';
+                    }
+                }
+            });
+            
+            // Apply character changes
+            applyCharacter.addEventListener('click', function() {
+                if (!selectedElementId) {
+                    alert('请先选择一个角色元素');
+                    return;
+                }
+                
+                const selectedChar = characterSelector.value;
+                if (!selectedChar) {
+                    alert('请选择一个角色');
+                    return;
+                }
+                
+                const charElement = document.getElementById(selectedElementId);
+                if (!charElement) return;
+                
+                // Get the character name from the dropdown text
+                const selectedOption = characterSelector.options[characterSelector.selectedIndex];
+                const charName = selectedOption.text;
+                
+                // Update the character name
+                charElement.textContent = charName;
+                
+                // Find and update the character image
+                const charImageContainer = charElement.closest('.character-item').querySelector('.character-image');
+                if (charImageContainer) {
+                    const imgElement = charImageContainer.querySelector('img');
+                    if (imgElement) {
+                        imgElement.src = `https://cdn.jsdelivr.net/gh/identity-v-images/characters/${selectedChar}.png`;
+                        imgElement.alt = charName;
+                    }
+                }
+                
+                alert('角色已更新');
+            });
+            
+            // Update progress value display when slider changes
+            progressValue.addEventListener('input', function() {
+                progressPercent.textContent = this.value + '%';
+            });
+            
+            // Apply progress changes
+            applyProgress.addEventListener('click', function() {
+                if (!selectedProgressId) {
+                    alert('请先选择一个进度条');
+                    return;
+                }
+                
+                const percent = progressValue.value;
+                const progressBarFill = document.getElementById(selectedProgressId);
+                
+                if (progressBarFill) {
+                    progressBarFill.style.width = percent + '%';
+                    alert('进度已更新');
+                }
+            });
+            
+            // Update dynamic elements based on text content
+            function updateDynamicElements() {
+                // Update cipher machine progress
+                const team1Cipher = document.getElementById('team1-cipher');
+                if (team1Cipher) {
+                    const cipherText = team1Cipher.textContent;
+                    const match = cipherText.match(/(\d+)\/(\d+)/);
+                    
+                    if (match && match.length === 3) {
+                        const completed = parseInt(match[1]);
+                        const total = parseInt(match[2]);
+                        const percent = (completed / total) * 100;
+                        
+                        const progressBar = document.getElementById('team1-cipher-progress');
+                        if (progressBar) {
+                            progressBar.style.width = percent + '%';
+                        }
+                    }
+                }
+                
+                const team2Cipher = document.getElementById('team2-cipher');
+                if (team2Cipher) {
+                    const cipherText = team2Cipher.textContent;
+                    const match = cipherText.match(/(\d+)\/(\d+)/);
+                    
+                    if (match && match.length === 3) {
+                        const completed = parseInt(match[1]);
+                        const total = parseInt(match[2]);
+                        const percent = (completed / total) * 100;
+                        
+                        const progressBar = document.getElementById('team2-cipher-progress');
+                        if (progressBar) {
+                            progressBar.style.width = percent + '%';
+                        }
+                    }
+                }
+                
+                // Update rescue rate progress
+                const team1Rescue = document.getElementById('team1-rescue');
+                if (team1Rescue) {
+                    const rescueText = team1Rescue.textContent;
+                    const match = rescueText.match(/(\d+)%/);
+                    
+                    if (match && match.length === 2) {
+                        const percent = parseInt(match[1]);
+                        
+                        const progressBar = document.getElementById('team1-rescue-progress');
+                        if (progressBar) {
+                            progressBar.style.width = percent + '%';
+                        }
+                    }
+                }
+                
+                const team2Rescue = document.getElementById('team2-rescue');
+                if (team2Rescue) {
+                    const rescueText = team2Rescue.textContent;
+                    const match = rescueText.match(/(\d+)%/);
+                    
+                    if (match && match.length === 2) {
+                        const percent = parseInt(match[1]);
+                        
+                        const progressBar = document.getElementById('team2-rescue-progress');
+                        if (progressBar) {
+                            progressBar.style.width = percent + '%';
+                        }
+                    }
+                }
+                
+                // Update ranking progress bars
+                updateRankingProgressBars('kite-rank', 4);
+                updateRankingProgressBars('rescue-rank', 4);
+                updateRankingProgressBars('cipher-rank', 4);
+                updateRankingProgressBars('elim-rank', 4);
+                updateRankingProgressBars('chase-rank', 4);
+                updateRankingProgressBars('control-rank', 4);
+                
+                // Update team logos
+                const team1Name = document.getElementById('team1-name');
+                const team1Logo = document.getElementById('team1-logo');
+                if (team1Name && team1Logo) {
+                    team1Logo.textContent = team1Name.textContent.charAt(0);
+                }
+                
+                const team2Name = document.getElementById('team2-name');
+                const team2Logo = document.getElementById('team2-logo');
+                if (team2Name && team2Logo) {
+                    team2Logo.textContent = team2Name.textContent.charAt(0);
+                }
+                
+                // Update character images based on character names
+                updateCharacterImages();
+            }
+            
+            // Update ranking progress bars
+            function updateRankingProgressBars(idPrefix, count) {
+                const values = [];
+                
+                // Collect values
+                for (let i = 1; i <= count; i++) {
+                    const valueElement = document.getElementById(`${idPrefix}${i}-value`);
+                    if (valueElement) {
+                        const valueText = valueElement.textContent;
+                        const match = valueText.match(/(\d+)/);
+                        
+                        if (match && match.length === 2) {
+                            const value = parseInt(match[1]);
+                            values.push({ index: i, value: value });
+                        } else if (valueText.includes('A+')) {
+                            values.push({ index: i, value: 95 });
+                        } else if (valueText.includes('A')) {
+                            values.push({ index: i, value: 85 });
+                        } else if (valueText.includes('A-')) {
+                            values.push({ index: i, value: 80 });
+                        } else if (valueText.includes('B+')) {
+                            values.push({ index: i, value: 75 });
+                        } else if (valueText.includes('B')) {
+                            values.push({ index: i, value: 70 });
+                        }
+                    }
+                }
+                
+                // Sort values
+                values.sort((a, b) => b.value - a.value);
+                
+                // Update progress bars
+                values.forEach((item, index) => {
+                    const progressBar = document.getElementById(`${idPrefix}${item.index}-progress`);
+                    if (progressBar) {
+                        const maxValue = values[0].value;
+                        const percent = (item.value / maxValue) * 100;
+                        progressBar.style.width = percent + '%';
+                    }
+                });
+            }
+            
+            // Update character images based on character names
+            function updateCharacterImages() {
+                // Team 1 characters
+                for (let i = 1; i <= 4; i++) {
+                    const charElement = document.getElementById(`team1-char${i}`);
+                    if (charElement) {
+                        const charName = charElement.textContent.trim();
+                        const charImageId = characterImages[charName];
+                        
+                        if (charImageId) {
+                            const imgElement = document.querySelector(`#team1-char${i}-img img`);
+                            if (imgElement) {
+                                imgElement.src = `https://cdn.jsdelivr.net/gh/identity-v-images/characters/${charImageId}.png`;
+                                imgElement.alt = charName;
+                            }
+                        }
+                    }
+                }
+                
+                // Team 2 characters
+                for (let i = 1; i <= 4; i++) {
+                    const charElement = document.getElementById(`team2-char${i}`);
+                    if (charElement && charElement.textContent.trim()) {
+                        const charName = charElement.textContent.trim();
+                        const charImageId = characterImages[charName];
+                        
+                        if (charImageId) {
+                            const imgElement = document.querySelector(`#team2-char${i}-img img`);
+                            if (imgElement) {
+                                imgElement.src = `https://cdn.jsdelivr.net/gh/identity-v-images/characters/${charImageId}.png`;
+                                imgElement.alt = charName;
+                            }
+                            
+                            const container = document.getElementById(`team2-char${i}-container`);
+                            if (container) {
+                                container.classList.remove('hidden');
+                            }
+                        }
+                    }
+                }
+                
+                // MVP character
+                const mvpElement = document.getElementById('mvp-team');
+                if (mvpElement) {
+                    const mvpText = mvpElement.textContent;
+                    const charMatch = mvpText.match(/(\S+)$/);
+                    
+                    if (charMatch && charMatch.length === 2) {
+                        const charName = charMatch[1];
+                        const charImageId = characterImages[charName];
+                        
+                        if (charImageId) {
+                            const imgElement = document.querySelector('#mvp-char-img img');
+                            if (imgElement) {
+                                imgElement.src = `https://cdn.jsdelivr.net/gh/identity-v-images/characters/${charImageId}.png`;
+                                imgElement.alt = charName;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Initialize the page
+            updateProgressBars();
+            updateCharacterImages();
+            
+            // Make everything an appropriate size for PDF export
+            function optimizeForPrint() {
+                const containers = document.querySelectorAll('.container');
+                containers.forEach(container => {
+                    container.style.maxWidth = '100%';
+                });
+            }
+            
+            optimizeForPrint();
+        });
+    </script>
+
+</body></html>
