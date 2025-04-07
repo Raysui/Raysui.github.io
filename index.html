@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>东华杯第五人格赛事</title>
     <link href="./东华杯第五人格赛事8_files/tailwind.min.css" rel="stylesheet">
-    <script src="./东华杯第五人格赛事8_files/firebase-app-compat.js.下载"></script>
-    <script src="./东华杯第五人格赛事8_files/firebase-firestore-compat.js.下载"></script>
     <style>
         :root {
             --main-bg-color: #1a1a1a;
@@ -690,44 +688,9 @@
             }
         }
 
-        /* Firebase Admin Notice styling */
-        .firebase-notice {
-            background-color: #335555;
-            border: 1px solid #446666;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 8px;
-            display: none;
+    
         }
 
-        .firebase-notice h3 {
-            color: var(--highlight-color);
-            margin-top: 0;
-        }
-
-        .firebase-notice pre {
-            background-color: #1a2222;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            margin: 10px 0;
-        }
-
-        .firebase-setup-steps {
-            margin-top: 15px;
-        }
-
-        .firebase-setup-steps li {
-            margin-bottom: 10px;
-        }
-
-        .firebase-setup-steps code {
-            background-color: rgba(0,0,0,0.2);
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: monospace;
-        }
     </style>
 </head>
 <body class="">
@@ -744,31 +707,6 @@
             <p>点击下方的"退出编辑模式"按钮可以退出管理员模式。</p>
         </div>
 
-        <div id="firebase-notice" class="firebase-notice" style="display: none;">
-            <h3>Firebase配置说明</h3>
-            <p>要启用多设备数据同步，您需要替换以下Firebase配置:</p>
-            <pre>// 在下方替换为您的Firebase配置
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};</pre>
-            
-            <div class="firebase-setup-steps">
-                <p>设置步骤:</p>
-                <ol>
-                    <li>访问 <a href="https://firebase.google.com/" target="_blank" style="color: #88ccff;">Firebase官网</a> 并创建账户</li>
-                    <li>创建新项目</li>
-                    <li>在左侧菜单中点击"Firestore Database"并创建数据库</li>
-                    <li>在项目设置中添加Web应用并获取配置</li>
-                    <li>用您的配置替换上方的示例代码</li>
-                    <li>保存文件并重新打开</li>
-                </ol>
-            </div>
-        </div>
 
         <section class="panel">
             <h2 class="section-title editable">比赛信息</h2>
@@ -1669,7 +1607,6 @@ const firebaseConfig = {
     <!-- Admin Toolbar -->
     <div id="admin-toolbar" style="display: none;">
         <button id="exit-admin" class="admin-button">退出编辑模式</button>
-        <button id="show-firebase" class="admin-button ml-2">Firebase设置</button>
         <button id="export-data" class="admin-button ml-2">导出数据</button>
         <button id="import-data" class="admin-button ml-2">导入数据</button>
         <input type="file" id="import-file" style="display: none">
@@ -1679,31 +1616,7 @@ const firebaseConfig = {
         // Firebase 配置
         // 在这里替换为您的Firebase配置
       // Firebase配置
-           const firebaseConfig = {
-               apiKey: "AIzaSyDZYkI7asqcsdj77bAsHhPX8bZCL95tQ00",
-               authDomain: "donghuacup.firebaseapp.com",
-               projectId: "donghuacup",
-               storageBucket: "donghuacup.firebasestorage.app",
-               messagingSenderId: "373839828994",
-               appId: "1:373839828994:web:b5d9fde04cfa9576742f1b",
-               measurementId: "G-YP6JLB9TCV"
-             };
-
-
-        // 初始化 Firebase (如果配置有效)
-        let db = null;
-        let firebaseInitialized = false;
-
-        try {
-            if (firebaseConfig.apiKey !== "AIzaSyDZYkI7asqcsdj77bAsHhPX8bZCL95tQ00") {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                firebaseInitialized = true;
-                console.log("Firebase initialized successfully");
-            }
-        } catch (e) {
-            console.error("Error initializing Firebase:", e);
-        }
+  
 
         // 全局变量
         const ADMIN_PASSWORD = "admin";
@@ -1730,35 +1643,13 @@ const firebaseConfig = {
             // 初始化添加新战队和选手按钮
             initAddButtons();
             
+            
             // 监听窗口大小变化，重绘对战表连接线
             window.addEventListener('resize', drawBracketLines);
         });
 
         // 加载保存的数据
-        function loadSavedData() {
-            if (firebaseInitialized) {
-                // 从Firebase加载数据
-                db.collection("tournamentData").doc("main")
-                    .get()
-                    .then((doc) => {
-                        if (doc.exists) {
-                            const data = doc.data();
-                            applyDataToPage(data);
-                        } else {
-                            // 如果Firebase中没有数据，尝试从localStorage加载
-                            loadFromLocalStorage();
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error loading data from Firebase:", error);
-                        // 如果Firebase加载失败，尝试从localStorage加载
-                        loadFromLocalStorage();
-                    });
-            } else {
-                // 如果Firebase未初始化，从localStorage加载数据
-                loadFromLocalStorage();
-            }
-        }
+      
 
         // 从localStorage加载数据
         function loadFromLocalStorage() {
@@ -1796,18 +1687,7 @@ const firebaseConfig = {
             
             // 保存到localStorage作为备份
             localStorage.setItem('donghuaCupData', JSON.stringify(data));
-            
-            if (firebaseInitialized) {
-                // 保存到Firebase
-                db.collection("tournamentData").doc("main")
-                    .set(data)
-                    .then(() => {
-                        console.log("Data successfully saved to Firebase");
-                    })
-                    .catch((error) => {
-                        console.error("Error saving data to Firebase:", error);
-                    });
-            }
+           
             
             // 更新所有进度条
             updateAllProgressBars();
@@ -2071,7 +1951,6 @@ const firebaseConfig = {
         function initAdminToolbar() {
             const toolbar = document.getElementById('admin-toolbar');
             const exitBtn = document.getElementById('exit-admin');
-            const showFirebaseBtn = document.getElementById('show-firebase');
             const exportBtn = document.getElementById('export-data');
             const importBtn = document.getElementById('import-data');
             const importFile = document.getElementById('import-file');
@@ -2081,15 +1960,8 @@ const firebaseConfig = {
                 exitEditMode();
             });
             
-            // 显示Firebase设置说明
-            showFirebaseBtn.addEventListener('click', function() {
-                const firebaseNotice = document.getElementById('firebase-notice');
-                if (firebaseNotice.style.display === 'block') {
-                    firebaseNotice.style.display = 'none';
-                } else {
-                    firebaseNotice.style.display = 'block';
-                }
-            });
+        
+        
             
             // 导出数据
             exportBtn.addEventListener('click', function() {
@@ -2321,8 +2193,7 @@ const firebaseConfig = {
             // 隐藏管理员通知
             document.getElementById('admin-notice').style.display = 'none';
             
-            // 隐藏Firebase设置说明
-            document.getElementById('firebase-notice').style.display = 'none';
+            
             
             // 隐藏添加按钮
             document.getElementById('add-team-btn-container').style.display = 'none';
@@ -2441,312 +2312,309 @@ const firebaseConfig = {
             currentEditingElement = null;
         }
     </script>
-<!-- Firebase修复补丁 - 开始 -->
-<div id="firebase-debug-panel" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; max-width: 400px; max-height: 200px; overflow: auto; z-index: 9999; display: none;">
-  <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-    <strong>Firebase状态</strong>
-    <span onclick="document.getElementById('firebase-debug-panel').style.display='none'" style="cursor: pointer;">✕</span>
-  </div>
-  <div id="firebase-status-message">初始化中...</div>
-  <div id="firebase-logs" style="margin-top: 5px; font-size: 11px;"></div>
-</div>
+<!-- Firebase库加载和修复补丁 - 开始 -->
 
+<!-- 先加载Firebase必要的库 -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<!-- Firebase初始化和修复脚本 -->
 <script>
-/***************************************************
- * Firebase修复补丁 v1.0
- * 用于解决数据保存/读取问题
- ***************************************************/
+// 确保Firebase配置正确设置
+const firebaseConfig = {
+  apiKey: "AIzaSyDZYkI7asqcsdj77bAsHhPX8bZCL95tQ00",
+  authDomain: "donghuacup.firebaseapp.com",
+  projectId: "donghuacup",
+  storageBucket: "donghuacup.appspot.com",
+  messagingSenderId: "373839828994",
+  appId: "1:373839828994:web:b5d9fde04cfa9576742f1b",
+  measurementId: "G-YP6JLB9TCV"
+};
 
-// 显示调试面板(开发时使用)
-const SHOW_DEBUG_PANEL = true;
-
-// 初始化调试面板
-if (SHOW_DEBUG_PANEL) {
-  document.getElementById('firebase-debug-panel').style.display = 'block';
-}
-
-// 日志函数
-function firebaseLog(message, isError = false) {
-  const now = new Date().toLocaleTimeString();
-  console.log(`[Firebase] ${message}`);
+// 初始化Firebase(带检查以避免重复初始化)
+function initializeFirebase() {
+  if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
+    console.log("Firebase已经初始化，跳过...");
+    return firebase.app();
+  }
   
-  if (SHOW_DEBUG_PANEL) {
-    const logsElem = document.getElementById('firebase-logs');
-    const msgClass = isError ? 'color: #ff5555;' : 'color: #55ff55;';
-    logsElem.innerHTML += `<div style="${msgClass}">[${now}] ${message}</div>`;
-    logsElem.scrollTop = logsElem.scrollHeight;
+  if (typeof firebase === 'undefined') {
+    console.error("Firebase库未加载！请检查网络连接和脚本引用。");
+    showFirebaseError("Firebase库未加载。请检查网络连接并刷新页面。");
+    return null;
   }
-}
-
-// 更新状态消息
-function updateFirebaseStatus(message, isError = false) {
-  if (SHOW_DEBUG_PANEL) {
-    const statusElem = document.getElementById('firebase-status-message');
-    statusElem.textContent = message;
-    statusElem.style.color = isError ? '#ff5555' : '#55ff55';
-  }
-  firebaseLog(message, isError);
-}
-
-// 检查Firebase是否已初始化
-function isFirebaseInitialized() {
+  
   try {
-    return firebase.apps && firebase.apps.length > 0;
-  } catch (e) {
+    console.log("初始化Firebase...");
+    return firebase.initializeApp(firebaseConfig);
+  } catch (error) {
+    console.error("Firebase初始化错误:", error);
+    showFirebaseError("Firebase初始化失败: " + error.message);
+    return null;
+  }
+}
+
+// 显示Firebase错误消息
+function showFirebaseError(message) {
+  // 创建错误提示元素
+  const errorDiv = document.createElement('div');
+  errorDiv.style.position = 'fixed';
+  errorDiv.style.top = '10px';
+  errorDiv.style.left = '50%';
+  errorDiv.style.transform = 'translateX(-50%)';
+  errorDiv.style.backgroundColor = '#ff5555';
+  errorDiv.style.color = 'white';
+  errorDiv.style.padding = '10px 20px';
+  errorDiv.style.borderRadius = '5px';
+  errorDiv.style.zIndex = '9999';
+  errorDiv.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+  errorDiv.style.fontFamily = 'Arial, sans-serif';
+  errorDiv.textContent = message;
+  
+  // 添加关闭按钮
+  const closeBtn = document.createElement('span');
+  closeBtn.textContent = ' ✕';
+  closeBtn.style.marginLeft = '10px';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.onclick = function() { errorDiv.remove(); };
+  errorDiv.appendChild(closeBtn);
+  
+  // 添加到页面
+  document.body.appendChild(errorDiv);
+  
+  // 5秒后自动消失
+  setTimeout(() => {
+    if (document.body.contains(errorDiv)) {
+      errorDiv.remove();
+    }
+  }, 5000);
+}
+
+// 确保Firestore正确初始化
+function getFirestore() {
+  const app = initializeFirebase();
+  if (!app) return null;
+  
+  try {
+    return firebase.firestore();
+  } catch (error) {
+    console.error("Firestore初始化错误:", error);
+    showFirebaseError("Firestore初始化失败: " + error.message);
+    return null;
+  }
+}
+
+// 保存数据到Firebase(带重试和错误处理)
+function saveDataToFirebase(data, collection = "tournamentData", docId = "main", maxRetries = 3) {
+  console.log("尝试保存数据到Firebase...", {collection, docId});
+  
+  // 清理数据以移除不兼容的类型
+  const cleanData = JSON.parse(JSON.stringify(data));
+  let attempt = 0;
+  
+  function tryToSave() {
+    attempt++;
+    console.log(`保存尝试 #${attempt}...`);
+    
+    const db = getFirestore();
+    if (!db) {
+      console.error("无法获取Firestore实例");
+      return Promise.reject(new Error("无法获取Firestore实例"));
+    }
+    
+    return db.collection(collection).doc(docId)
+      .set(cleanData)
+      .then(() => {
+        console.log("数据保存成功!");
+        return true;
+      })
+      .catch((error) => {
+        console.error(`保存失败(尝试 ${attempt}/${maxRetries}):`, error);
+        
+        if (attempt < maxRetries) {
+          // 使用指数退避策略
+          const delay = Math.min(Math.pow(2, attempt) * 1000, 10000);
+          console.log(`${delay/1000}秒后重试...`);
+          
+          return new Promise(resolve => {
+            setTimeout(() => resolve(tryToSave()), delay);
+          });
+        }
+        
+        showFirebaseError("保存数据失败: " + error.message);
+        return Promise.reject(error);
+      });
+  }
+  
+  return tryToSave();
+}
+
+// 从Firebase加载数据(带重试和错误处理)
+function loadDataFromFirebase(collection = "tournamentData", docId = "main", maxRetries = 3) {
+  console.log("尝试从Firebase加载数据...", {collection, docId});
+  
+  let attempt = 0;
+  
+  function tryToLoad() {
+    attempt++;
+    console.log(`加载尝试 #${attempt}...`);
+    
+    const db = getFirestore();
+    if (!db) {
+      console.error("无法获取Firestore实例");
+      return Promise.reject(new Error("无法获取Firestore实例"));
+    }
+    
+    return db.collection(collection).doc(docId)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          console.log("成功加载数据!");
+          return doc.data();
+        } else {
+          console.log("文档不存在，返回null");
+          return null;
+        }
+      })
+      .catch((error) => {
+        console.error(`加载失败(尝试 ${attempt}/${maxRetries}):`, error);
+        
+        if (attempt < maxRetries) {
+          // 使用指数退避策略
+          const delay = Math.min(Math.pow(2, attempt) * 1000, 10000);
+          console.log(`${delay/1000}秒后重试...`);
+          
+          return new Promise(resolve => {
+            setTimeout(() => resolve(tryToLoad()), delay);
+          });
+        }
+        
+        showFirebaseError("加载数据失败: " + error.message);
+        return Promise.reject(error);
+      });
+  }
+  
+  return tryToLoad();
+}
+
+// 测试Firebase连接是否正常
+function testFirebaseConnection() {
+  console.log("测试Firebase连接...");
+  
+  const db = getFirestore();
+  if (!db) {
+    console.error("无法获取Firestore实例进行测试");
+    return Promise.resolve(false);
+  }
+  
+  return db.collection("test").doc("connection")
+    .set({
+      timestamp: new Date().toISOString(),
+      client: navigator.userAgent
+    })
+    .then(() => {
+      console.log("Firebase连接测试成功!");
+      return true;
+    })
+    .catch((error) => {
+      console.error("Firebase连接测试失败:", error);
+      return false;
+    });
+}
+
+// 以下是额外的实用函数，可以根据需要使用
+
+// 导出数据为JSON文件下载
+function exportDataToJson(data, filename = "tournament_data.json") {
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  
+  URL.revokeObjectURL(url);
+}
+
+// 从localStorage保存/加载数据(作为备份)
+function saveToLocalStorage(data, key = "tournament_data") {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    console.log("数据已保存到本地存储");
+    return true;
+  } catch (error) {
+    console.error("保存到本地存储失败:", error);
     return false;
   }
 }
 
-// 重新初始化Firebase
-function reinitializeFirebase() {
+function loadFromLocalStorage(key = "tournament_data") {
   try {
-    // 检查是否已初始化
-    if (isFirebaseInitialized()) {
-      updateFirebaseStatus("Firebase已初始化，跳过重新初始化");
-      return firebase.app();
-    }
-    
-    // 确保配置对象存在
-    if (!firebaseConfig || !firebaseConfig.apiKey) {
-      throw new Error("Firebase配置不存在或不完整");
-    }
-    
-    // 初始化Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    updateFirebaseStatus("Firebase初始化成功");
-    return app;
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
   } catch (error) {
-    updateFirebaseStatus(`Firebase初始化错误: ${error.message}`, true);
-    throw error;
+    console.error("从本地存储加载失败:", error);
+    return null;
   }
 }
 
-// 检查Firestore是否可用
-function ensureFirestore() {
-  try {
-    reinitializeFirebase();
-    
-    // 检查Firestore是否可用
-    if (!firebase.firestore) {
-      throw new Error("Firestore未加载");
-    }
-    
-    return firebase.firestore();
-  } catch (error) {
-    updateFirebaseStatus(`Firestore错误: ${error.message}`, true);
-    throw error;
-  }
-}
-
-// 测试Firebase连接
-function testFirebaseConnection() {
-  try {
-    const db = ensureFirestore();
-    updateFirebaseStatus("正在测试Firebase连接...");
-    
-    return db.collection("_test_connection").doc("status")
-      .set({ 
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        client: navigator.userAgent,
-        url: window.location.href
-      })
-      .then(() => {
-        updateFirebaseStatus("Firebase连接测试成功 ✅");
-        return true;
-      })
-      .catch((error) => {
-        updateFirebaseStatus(`Firebase连接测试失败: ${error.message} ❌`, true);
-        
-        // 检查是否是权限错误
-        if (error.code === 'permission-denied') {
-          updateFirebaseStatus("Firebase权限被拒绝，可能是数据库规则限制", true);
-        }
-        
-        return false;
-      });
-  } catch (error) {
-    updateFirebaseStatus(`Firebase连接测试错误: ${error.message}`, true);
-    return Promise.resolve(false);
-  }
-}
-
-// 保存数据的增强函数(带重试)
-function saveFirebaseDataWithRetry(collectionName, docId, data, maxRetries = 3) {
-  // 清理数据以移除不支持的类型
-  const cleanData = JSON.parse(JSON.stringify(data));
-  
-  let attempts = 0;
-  
-  function attempt() {
-    attempts++;
-    firebaseLog(`尝试保存数据(第${attempts}次)`);
-    
-    try {
-      const db = ensureFirestore();
-      return db.collection(collectionName).doc(docId)
-        .set(cleanData, { merge: true })
-        .then(() => {
-          updateFirebaseStatus(`数据保存成功 ✅`);
-          return true;
-        })
-        .catch((error) => {
-          firebaseLog(`保存尝试${attempts}失败: ${error.message}`, true);
-          
-          if (attempts < maxRetries) {
-            const waitTime = Math.min(Math.pow(2, attempts) * 1000, 10000);
-            firebaseLog(`${waitTime/1000}秒后重试...`);
-            
-            return new Promise(resolve => 
-              setTimeout(() => resolve(attempt()), waitTime)
-            );
-          }
-          
-          updateFirebaseStatus(`保存失败，已达到最大重试次数`, true);
-          throw error;
-        });
-    } catch (error) {
-      updateFirebaseStatus(`保存数据错误: ${error.message}`, true);
-      return Promise.reject(error);
-    }
-  }
-  
-  return attempt();
-}
-
-// 读取数据的增强函数(带重试)
-function loadFirebaseDataWithRetry(collectionName, docId, maxRetries = 3) {
-  let attempts = 0;
-  
-  function attempt() {
-    attempts++;
-    firebaseLog(`尝试读取数据(第${attempts}次)`);
-    
-    try {
-      const db = ensureFirestore();
-      return db.collection(collectionName).doc(docId)
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            updateFirebaseStatus(`数据读取成功 ✅`);
-            return doc.data();
-          } else {
-            firebaseLog(`文档不存在，返回null`);
-            return null;
-          }
-        })
-        .catch((error) => {
-          firebaseLog(`读取尝试${attempts}失败: ${error.message}`, true);
-          
-          if (attempts < maxRetries) {
-            const waitTime = Math.min(Math.pow(2, attempts) * 1000, 10000);
-            firebaseLog(`${waitTime/1000}秒后重试...`);
-            
-            return new Promise(resolve => 
-              setTimeout(() => resolve(attempt()), waitTime)
-            );
-          }
-          
-          updateFirebaseStatus(`读取失败，已达到最大重试次数`, true);
-          throw error;
-        });
-    } catch (error) {
-      updateFirebaseStatus(`读取数据错误: ${error.message}`, true);
-      return Promise.reject(error);
-    }
-  }
-  
-  return attempt();
-}
-
-// 创建强化版的Firebase工具
-const enhancedFirebase = {
-  /**
-   * 保存数据到Firebase
-   * @param {string} collectionName - 集合名称
-   * @param {string} docId - 文档ID
-   * @param {Object} data - 要保存的数据
-   * @returns {Promise<boolean>} - 是否成功
-   */
-  saveData: function(collectionName, docId, data) {
-    return saveFirebaseDataWithRetry(collectionName, docId, data);
-  },
-  
-  /**
-   * 从Firebase读取数据
-   * @param {string} collectionName - 集合名称
-   * @param {string} docId - 文档ID
-   * @returns {Promise<Object|null>} - 读取的数据或null
-   */
-  loadData: function(collectionName, docId) {
-    return loadFirebaseDataWithRetry(collectionName, docId);
-  },
-  
-  /**
-   * 测试连接是否正常
-   * @returns {Promise<boolean>} - 连接是否成功
-   */
-  testConnection: testFirebaseConnection,
-  
-  /**
-   * 显示调试面板
-   */
-  showDebugPanel: function() {
-    document.getElementById('firebase-debug-panel').style.display = 'block';
-  },
-  
-  /**
-   * 隐藏调试面板
-   */
-  hideDebugPanel: function() {
-    document.getElementById('firebase-debug-panel').style.display = 'none';
-  }
-};
-
-// 定义全局变量，用于替换原来的Firebase调用
-window.enhancedFirebase = enhancedFirebase;
-
-// 替换保存与读取函数(注意修改这里以匹配您的原始函数名称)
-// 如果您的代码使用的是不同的函数名，请相应修改
-if (typeof saveDataToFirebase === 'function') {
-  firebaseLog("替换原始saveDataToFirebase函数");
-  window.originalSaveDataToFirebase = window.saveDataToFirebase;
-  window.saveDataToFirebase = function(data) {
-    return enhancedFirebase.saveData("tournamentData", "main", data);
-  };
-}
-
-if (typeof loadDataFromFirebase === 'function') {
-  firebaseLog("替换原始loadDataFromFirebase函数");
-  window.originalLoadDataFromFirebase = window.loadDataFromFirebase;
-  window.loadDataFromFirebase = function() {
-    return enhancedFirebase.loadData("tournamentData", "main");
-  };
-}
-
-// 初始测试
-setTimeout(() => {
-  firebaseLog("开始执行Firebase连接测试");
-  enhancedFirebase.testConnection()
-    .then(connected => {
-      if (connected) {
-        firebaseLog("Firebase连接成功，可以正常使用");
-      } else {
-        firebaseLog("Firebase连接测试失败，将使用本地存储作为备份", true);
-      }
+// 混合保存函数 - 尝试Firebase，失败后回退到localStorage
+function saveData(data) {
+  return saveDataToFirebase(data)
+    .catch(error => {
+      console.warn("Firebase保存失败，回退到本地存储", error);
+      return saveToLocalStorage(data);
     });
-}, 1000);
+}
 
-// 提供快捷测试函数(可在控制台使用)
-window.testFirebaseNow = function() {
-  enhancedFirebase.showDebugPanel();
-  enhancedFirebase.testConnection()
-    .then(result => console.log("Firebase连接测试结果:", result));
+// 混合加载函数 - 尝试Firebase，失败后回退到localStorage
+function loadData() {
+  return loadDataFromFirebase()
+    .then(data => {
+      if (data) return data;
+      console.log("Firebase无数据，尝试本地存储");
+      return loadFromLocalStorage();
+    })
+    .catch(error => {
+      console.warn("Firebase加载失败，回退到本地存储", error);
+      return loadFromLocalStorage();
+    });
+}
+
+// 导出这些函数给全局使用
+window.firebase_utils = {
+  saveData,
+  loadData,
+  saveDataToFirebase,
+  loadDataFromFirebase,
+  testFirebaseConnection,
+  exportDataToJson,
+  saveToLocalStorage,
+  loadFromLocalStorage
 };
 
-// 显示诊断提示
-firebaseLog("Firebase修复补丁已加载 ✓");
-firebaseLog("使用F12打开控制台，输入testFirebaseNow()可测试连接");
+// 在页面加载完成后进行初始化测试
+window.addEventListener('load', function() {
+  console.log("页面加载完成，测试Firebase...");
+  setTimeout(() => {
+    testFirebaseConnection()
+      .then(connected => {
+        if (connected) {
+          console.log("✅ Firebase连接正常，可以使用");
+        } else {
+          console.warn("⚠️ Firebase连接异常，将使用本地存储");
+        }
+      });
+  }, 1000);
+});
+
+// 立即初始化Firebase(不等待页面加载)
+initializeFirebase();
 </script>
-<!-- Firebase修复补丁 - 结束 -->
+
+<!-- Firebase库加载和修复补丁 - 结束 -->
+
 
 </body></html>
